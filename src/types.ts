@@ -49,6 +49,7 @@ export interface IOrderable<T extends IEntity> {
 
 export interface ILimitable<T extends IEntity> {
   limit(limitVal: number): IQueryBuilder<T>;
+  startAfter(fieldVal: string | Date);
 }
 
 export type IQueryBuilder<T extends IEntity> = IQueryable<T> & IOrderable<T> & ILimitable<T>;
@@ -58,7 +59,8 @@ export interface IQueryExecutor<T> {
     queries: IFireOrmQueryLine[],
     limitVal?: number,
     orderByObj?: IOrderByParams,
-    single?: boolean
+    single?: boolean,
+    startAfter?: string | Date
   ): Promise<T[]>;
 }
 
