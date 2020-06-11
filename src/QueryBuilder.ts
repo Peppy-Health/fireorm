@@ -15,6 +15,7 @@ export default class QueryBuilder<T extends IEntity> implements IQueryBuilder<T>
   protected queries: Array<IFireOrmQueryLine> = [];
   protected limitVal: number;
   protected orderByObj: IOrderByParams;
+  protected startAfterValue: string | Date;
 
   constructor(protected executor: IQueryExecutor<T>) {}
 
@@ -22,6 +23,11 @@ export default class QueryBuilder<T extends IEntity> implements IQueryBuilder<T>
     if (typeof param === 'string') return param;
     return getPath(param as Function).join('.');
   };
+
+  startAfter(fieldVal: string | Date): QueryBuilder<T> {
+    this.startAfterValue = fieldVal;
+    return this;
+  }
 
   whereEqualTo(param: IWherePropParam<T>, val: IFirestoreVal): QueryBuilder<T> {
     this.queries.push({
@@ -118,7 +124,13 @@ export default class QueryBuilder<T extends IEntity> implements IQueryBuilder<T>
   }
 
   find(): Promise<T[]> {
-    return this.executor.execute(this.queries, this.limitVal, this.orderByObj);
+    return this.executor.execute(
+      this.queries,
+      this.limitVal,
+      this.orderByObj,
+      false,
+      this.startAfterValue
+    );
   }
 
   async findOne(): Promise<T | null> {

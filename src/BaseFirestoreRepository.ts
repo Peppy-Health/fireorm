@@ -1,7 +1,7 @@
 // tslint:disable-next-line:no-import-side-effect
 import 'reflect-metadata';
 
-import { CollectionReference, WhereFilterOp } from '@google-cloud/firestore';
+import { CollectionReference, WhereFilterOp, FieldPath } from '@google-cloud/firestore';
 
 import { IRepository, IFireOrmQueryLine, IOrderByParams, IEntity, Instantiable } from './types';
 
@@ -100,7 +100,8 @@ export class BaseFirestoreRepository<T extends IEntity> extends AbstractFirestor
     queries: Array<IFireOrmQueryLine>,
     limitVal?: number,
     orderByObj?: IOrderByParams,
-    single?: boolean
+    single?: boolean,
+    startAfterValue?: string | Date
   ): Promise<T[]> {
     let query = queries.reduce((acc, cur) => {
       const op = cur.operator as WhereFilterOp;
@@ -109,6 +110,13 @@ export class BaseFirestoreRepository<T extends IEntity> extends AbstractFirestor
 
     if (orderByObj) {
       query = query.orderBy(orderByObj.fieldPath, orderByObj.directionStr);
+    }
+
+    if (startAfterValue) {
+      if (!orderByObj) {
+        query = query.orderBy(FieldPath.documentId());
+      }
+      query = query.startAfter(startAfterValue);
     }
 
     if (single) {

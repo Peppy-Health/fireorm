@@ -34,7 +34,8 @@
     "test:integration": "jest -c test/jest.config.js",
     "test:watch": "jest --watch src",
     "t": "yarn test",
-    "tw": "yarn test:watch"
+    "tw": "yarn test:watch",
+    "prepare": "tsc"
   },
   "dependencies": {
     "class-transformer": "^0.2.0",

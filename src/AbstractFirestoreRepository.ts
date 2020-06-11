@@ -114,6 +114,15 @@ export abstract class AbstractFirestoreRepository<T extends IEntity> extends Bas
   };
 
   /**
+   * Returns a new QueryBuilder with a cursor set after provided document field value
+   *
+   * @param {string} fieldVal document field value to start cursor after
+   */
+  startAfter(fieldVal: string | Date): IQueryBuilder<T> {
+    return new QueryBuilder<T>(this).startAfter(fieldVal);
+  }
+
+  /**
    * Returns a new QueryBuilder with a filter specifying that the
    * value in @param prop must be equal to @param val.
    *
